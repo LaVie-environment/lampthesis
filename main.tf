@@ -16,7 +16,7 @@ provider "aws" {
 
 # Create a VPC
 resource "aws_vpc" "uat_vpc" {
-  cidr_block       = "var.vpc_cidr"
+  cidr_block  = "178.0.0.0/16"
 
   tags = {
     Name = "uat-vpc"
