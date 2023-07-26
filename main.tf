@@ -7,22 +7,71 @@ terraform {
   }
 }
 
+
+# Configure the AWS Provider
 provider "aws" {
-    region = "eu-west-2"
-    profile = "gachio"
+    region = var.region
+    profile = var.profile_name
+}
+
+# Create a VPC
+resource "aws_vpc" "uat_vpc" {
+  cidr_block       = "var.vpc_cidr"
+
+  tags = {
+    Name = "uat-vpc"
+  }
+}
+
+resource "aws_internet_gateway" "uat_gw" {
+  vpc_id = aws_vpc.uat_vpc.id
+
+  tags = {
+    Name = "uat_igw"
+  }
+}
+
+resource "aws_subnet" "uat_public_subnet" {
+  vpc_id     = aws_vpc.uat_vpc.id
+  cidr_block = var.uat_public_subnet_cidr
+  map_public_ip_on_launch = true
+  availability_zone = "eu-west-2a"
+
+  tags = {
+    Name = "uat-public_subnet"
+  }
+}
+
+resource "aws_route_table" "uat_public_rt" {
+  vpc_id = aws_vpc.uat_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.uat_gw.id
+  }
+
+  tags = {
+    Name = "uat-public_rt"
+  }
+}
+
+resource "aws_route_table_association" "uat_public_rt_asso" {
+  subnet_id      = aws_subnet.uat_public_subnet.id
+  route_table_id = aws_route_table.uat_public_rt.id
 }
 
 resource "aws_instance" "uat_env" {
     ami = "ami-0eb260c4d5475b901"
-    instance_type = "t2.micro"
-    vpc_security_group_ids = [aws_security_group.uat_group.id]
+    instance_type = var.instance_type
+    subnet_id = aws_subnet.uat_public_subnet.id
+    security_groups = [aws_security_group.uat_sg.id]
 
     user_data = <<-EOF
                 #!/bin/bash
-                sudo apt-get install httpd
-                echo "<p> My Instance! </p>" >> /var/www/html/index.html
-                sudo systemctl enable httpd
-                sudo systemctl start httpd
+                echo "*** Installing apache2"
+                sudo apt update -y
+                sudo apt install apache2 -y
+                echo "*** Completed Installing apache2"
                 EOF
 
     tags = {
@@ -30,18 +79,5 @@ resource "aws_instance" "uat_env" {
     }
 }
 
-
-resource "aws_security_group" "uat_group" {
-  name        = "uat_env_group"
-  description = "Allow TLS inbound traffic"
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-}
 
 
