@@ -68,10 +68,10 @@ resource "aws_instance" "uat_env" {
 
     user_data = <<-EOF
                 #!/bin/bash
-                echo "*** Installing apache2"
+                echo "*** Installing Nginx"
                 sudo apt update -y
-                sudo apt install apache2 -y
-                echo "*** Completed Installing apache2"
+                sudo apt install nginx -y
+                echo "*** Completed Installing Nginx"
                 EOF
 
     tags = {
