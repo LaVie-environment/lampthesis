@@ -68,10 +68,10 @@ resource "aws_instance" "uat_env" {
 
     user_data = <<-EOF
     #!/bin/bash
-    echo "*** Installing Nginx"
     sudo apt update -y
     sudo apt install nginx -y
-    echo "*** Completed Installing Nginx"
+    echo '<!DOCTYPE html><html><head><title>About Panta</title></head><body><h1>Hello, this is a basic Panta page served by Nginx</h1></body></html>' | sudo tee /var/www/html/index.html
+    sudo service nginx restart
     EOF
 
     tags = {
