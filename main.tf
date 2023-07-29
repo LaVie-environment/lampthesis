@@ -67,16 +67,27 @@ resource "aws_instance" "uat_env" {
     security_groups = [aws_security_group.uat_sg.id]
 
     user_data = <<-EOF
-                #!/bin/bash
-                echo "*** Installing Nginx"
-                sudo apt update -y
-                sudo apt install nginx -y
-                echo "*** Completed Installing Nginx"
-                EOF
+    #!/bin/bash
+    echo "*** Installing Nginx"
+    sudo apt update -y
+    sudo apt install nginx -y
+    echo "*** Completed Installing Nginx"
+    EOF
 
     tags = {
         Name = "terraform-uat_env"
     }
+}
+
+
+terraform {
+  backend "s3" {
+    bucket = "works-up-and-running-state"
+    key = "global/s3/terraform.tfstate"
+    region = "eu-west-2"
+    dynamodb_table = "works-up-and-running-state"
+    encrypt = true
+  }
 }
 
 
