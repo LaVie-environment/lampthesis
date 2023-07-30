@@ -79,16 +79,16 @@ resource "aws_instance" "uat_env" {
     }
 }
 
-
+/*
 terraform {
   backend "s3" {
     bucket = "works-up-and-running-state"
-    key = "global/s3/terraform.tfstate"
+    key = "stage/services/webserver-cluster/terraform.tfstate"
     region = "eu-west-2"
     dynamodb_table = "works-up-and-running-state"
     encrypt = true
   }
 }
-
+*/
 
 
