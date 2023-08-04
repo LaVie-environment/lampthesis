@@ -91,4 +91,14 @@ terraform {
 }
 */
 
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config ={
+    bucket = "works-up-and-running-state"
+    key = "staging/data-stores/mysql/terraform.tfstate"
+    region = "eu-west-2"
+  }
+}
+
 
