@@ -15,3 +15,13 @@ resource "aws_db_instance" "uat_db" {
     username             = "gacio"
     password             = "Comeback20"
 }
+
+terraform {
+  backend "s3" {
+    bucket = "works-up-and-running-state"
+    key = "staging/data-stores/mysql/terraform.tfstate"
+    region = "eu-west-2"
+    dynamodb_table = "works-up-and-running-state"
+    encrypt = true
+  }
+}
