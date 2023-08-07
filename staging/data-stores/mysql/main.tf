@@ -16,6 +16,7 @@ resource "aws_db_instance" "uat_db" {
     password             = "Comeback20"
 }
 
+
 terraform {
   backend "s3" {
     bucket = "works-up-and-running-state"
@@ -25,3 +26,4 @@ terraform {
     encrypt = true
   }
 }
+
