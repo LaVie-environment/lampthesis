@@ -71,6 +71,8 @@ resource "aws_instance" "uat_env" {
     sudo apt update -y
     sudo apt install nginx -y
     echo '<!DOCTYPE html><html><head><title>About Panta</title></head><body><h1>Hello, this is a basic Panta page served by Nginx</h1></body></html>' | sudo tee /var/www/html/index.html
+    echo "${data.terraform_remote_state.db.outputs.address}" >> index.html
+    echo "${data.terraform_remote_state.db.outputs.port}" >> index.html
     sudo service nginx restart
     EOF
 
